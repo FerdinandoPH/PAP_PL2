@@ -3,23 +3,6 @@ import java.io.File
 
 class CargadorCSV {
 
-  private def inferirTipo(valor: String): Any = {
-    val t = valor.trim
-    t.toIntOption match {
-      case Some(i) => i
-      case None => t.toDoubleOption match {
-        case Some(d) if d.isValidInt => d.toInt
-        case Some(d) => d
-        case None => valor
-      }
-    }
-  }
-
-  private def esVacio(v: Any): Boolean = v match {
-    case s: String => s.trim.isEmpty
-    case _ => false
-  }
-
   def cargarCSV(archivo: File): Map[String, List[Any]] = {
     val reader = CSVReader.open(archivo)
     val filas = reader.allWithHeaders()
@@ -27,15 +10,26 @@ class CargadorCSV {
 
     if (filas.isEmpty) return Map.empty
 
-    val columnas = filas.head.keys.toList.tail
+    val columnas = filas.head.keys.toList
     columnas.map { col =>
-      val valores = filas.map(fila => inferirTipo(fila(col)))
-      val noVacios = valores.filterNot(esVacio)
-      val reemplazo: Any =
-        if (noVacios.nonEmpty && noVacios.forall(_.isInstanceOf[Int])) 0
-        else if (noVacios.nonEmpty && noVacios.forall(v => v.isInstanceOf[Int] || v.isInstanceOf[Double])) Double.NaN
-        else ""
-      col -> valores.map(v => if (esVacio(v)) reemplazo else v)
+      val crudos = filas.map(_(col).trim)
+      val noVacios = crudos.filter(_.nonEmpty)
+
+      val (tipoColumna, reemplazo: Any) =
+        if (noVacios.nonEmpty && noVacios.forall(s => s.toDoubleOption.exists(_.isValidInt))) ("Int", 0)
+        else if (noVacios.nonEmpty && noVacios.forall(_.toDoubleOption.isDefined)) ("Double", Double.NaN)
+        else ("String", "")
+
+      val valores: List[Any] = crudos.map { s =>
+        if (s.isEmpty) reemplazo
+        else tipoColumna match {
+          case "Int"    => s.toDouble.toInt
+          case "Double" => s.toDouble
+          case _        => s
+        }
+      }
+
+      (if (col.isEmpty) "id" else col) -> valores
     }.toMap
   }
 }
