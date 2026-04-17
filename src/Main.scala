@@ -94,7 +94,98 @@ object Main {
       case other => other
     }} minutos")
   }
-  def fase4():Unit={}
+  def fase4():Unit={
+    println("¿Sobre qué columna desea hacer el histograma?")
+    println("1. ORIGIN_AIRPORT")
+    println("2. DEST_AIRPORT")
+    print("Seleccione una opción: ")
+    val nombre_columna:String = scala.io.StdIn.readLine().trim match {
+      case "1" => "ORIGIN_AIRPORT"
+      case "2" => "DEST_AIRPORT"
+      case _ => println("Opción no válida, se usará ORIGIN_AIRPORT por defecto."); "ORIGIN_AIRPORT"
+    }
+    print("¿Cuál es el umbral mínimo de frecuencia para mostrar en el histograma? ")
+    val umbral: Int = scala.io.StdIn.readLine().trim.toInt
+    val l = datos(nombre_columna).asInstanceOf[List[String]]
+    @tailrec
+    def concat_listas(l1: List[(String, Int)], l2: List[(String, Int)]): List[(String, Int)] = {
+      l2 match {
+        case Nil => l1
+        case head :: tail => concat_listas(head :: l1, tail)
+      }
+    }
+
+    @tailrec
+    def reverso(l: List[(String, Int)], acc: List[(String, Int)] = List.empty): List[(String, Int)] = {
+      l match {
+        case Nil => acc
+        case head :: tail => reverso(tail, head :: acc)
+      }
+    }
+    @tailrec
+    def longitud(l:List[Any], acc:Int = 0):Int={
+      l match{
+        case Nil => acc
+        case _ :: tail => longitud(tail, acc + 1)
+      }
+    }
+    def generar_histograma(l:List[String]):List[(String,Int)]= {
+      @tailrec
+      def generar_histograma_aux(l: List[String], hist: List[(String, Int)]): List[(String, Int)] = {
+        l match {
+          case Nil => hist
+          case head :: tail =>
+            @tailrec
+            def actualizar_histograma(hist: List[(String, Int)], valor: String, acc: List[(String, Int)] = List.empty): List[(String, Int)] = {
+              hist match {
+                case Nil => (valor, 1) :: acc
+                case (c, v) :: tail =>
+                  if (c == valor) concat_listas((c, v + 1) :: tail, acc)
+                  else actualizar_histograma(tail, valor, (c, v) :: acc)
+              }
+            }
+
+            generar_histograma_aux(tail, actualizar_histograma(hist, head))
+
+        }
+      }
+
+      generar_histograma_aux(l, List.empty)
+    }
+    @tailrec
+    def ordenar_y_filtrar_histograma(hist: List[(String, Int)], umbral:Int, acc: List[(String, Int)] = List.empty): List[(String, Int)] = {
+      hist match {
+        case Nil => acc
+        case head :: tail =>
+          @tailrec
+          def insertar_ordenado(l: List[(String, Int)], valor: (String, Int), acc: List[(String, Int)] = List.empty): List[(String, Int)] = {
+            l match {
+              case Nil => reverso(valor :: acc)
+              case head :: tail =>
+                if (head._2 >= valor._2) insertar_ordenado(tail, valor, head :: acc)
+                else concat_listas(valor :: head :: tail, acc)
+            }
+          }
+          if (head._2 >= umbral) ordenar_y_filtrar_histograma(tail, umbral, insertar_ordenado(acc, head))
+          else ordenar_y_filtrar_histograma(tail, umbral, acc)
+      }
+    }
+    val histograma_desordenado = generar_histograma(l)
+    println(s"Histograma de aeropuertos con más ${if(nombre_columna == "ORIGIN_AIRPORT") "salidas" else "llegadas"}:")
+    println(s"Número de aeropuertos distintos: ${longitud(histograma_desordenado)}")
+    val histograma = ordenar_y_filtrar_histograma(histograma_desordenado, umbral)
+    @tailrec
+    def imprimir_histograma(hist:List[(String, Int)], max:Int, umbral:Int, num:Int=0):Unit= {
+      hist match {
+        case Nil => println(s"Aeropuertos mostrados (con más de $umbral vuelos): $num")
+        case head :: tail =>
+          println(f"${head._1} | ${"#" * (head._2 * 15 / max)} (${head._2})")
+          imprimir_histograma(tail, max, umbral, num+1)
+      }
+    }
+    if (histograma.isEmpty) println("Ningún aeropuerto supera el umbral indicado.")
+    else imprimir_histograma(histograma, histograma.head._2, umbral)
+  }
   def main(args: Array[String]): Unit = {
     val cargador = new CargadorCSV
     var ruta: String = ""
