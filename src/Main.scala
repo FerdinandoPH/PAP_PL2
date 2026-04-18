@@ -108,20 +108,25 @@ object Main {
     val umbral: Int = scala.io.StdIn.readLine().trim.toInt
     val l = datos(nombre_columna).asInstanceOf[List[String]]
     @tailrec
-    def concat_listas(l1: List[(String, Int)], l2: List[(String, Int)]): List[(String, Int)] = {
-      l2 match {
-        case Nil => l1
-        case head :: tail => concat_listas(head :: l1, tail)
-      }
-    }
-
-    @tailrec
     def reverso(l: List[(String, Int)], acc: List[(String, Int)] = List.empty): List[(String, Int)] = {
       l match {
         case Nil => acc
         case head :: tail => reverso(tail, head :: acc)
       }
     }
+
+
+    def concat_listas(l1: List[(String, Int)], l2: List[(String, Int)]): List[(String, Int)] = {
+      @tailrec
+      def concat_aux(l:List[(String, Int)], acc:List[(String, Int)]): List[(String, Int)] = {
+        l match {
+          case Nil => reverso(acc)
+          case head :: tail => concat_aux(tail, head :: acc)
+        }
+      }
+      concat_aux(l2, reverso(l1))
+    }
+
     @tailrec
     def longitud(l:List[Any], acc:Int = 0):Int={
       l match{
@@ -163,7 +168,7 @@ object Main {
               case Nil => reverso(valor :: acc)
               case head :: tail =>
                 if (head._2 >= valor._2) insertar_ordenado(tail, valor, head :: acc)
-                else concat_listas(valor :: head :: tail, acc)
+                else concat_listas(reverso(acc), valor :: head :: tail)
             }
           }
           if (head._2 >= umbral) ordenar_y_filtrar_histograma(tail, umbral, insertar_ordenado(acc, head))
