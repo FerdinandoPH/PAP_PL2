@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request
 from models import db, Entrada
 from datetime import datetime
+import dotenv
 def crear_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://pap_test_usu:1234@localhost:5432/pap_test'
+    app.config['SQLALCHEMY_DATABASE_URI'] = dotenv.get_key('.env', 'DATABASE_URL')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
@@ -56,7 +57,7 @@ def crear_app():
             return {'entradas': lista_entradas}, 200
         except Exception as e:
             return {'error': str(e)}, 500
-    return app,db
+    return app
 if __name__ == '__main__':
-    app,db = crear_app()
+    app = crear_app()
     app.run(debug=True)
