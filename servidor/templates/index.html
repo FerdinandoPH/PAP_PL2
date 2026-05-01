@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entradas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+<body>
+    <h1>Entradas registradas</h1>
+    <div class="tabla-contenedor">
+        <table>
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Fase</th>
+                    <th>Fecha</th>
+                    <th>Entrada</th>
+                    <th>Salida</th>
+                </tr>
+            </thead>
+            <tbody id="cuerpo-tabla"></tbody>
+        </table>
+    </div>
+    <p id="mensaje-error"></p>
+    <script src="{{ url_for('static', filename='js/tabla.js') }}"></script>
+</body>
+</html>

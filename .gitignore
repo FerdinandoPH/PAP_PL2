@@ -45,3 +45,10 @@ build/
 
 ### Scala ###
 .bsp/
+
+### Python ###
+__pycache__/
+**/.venv/
+
+### CSV files ###
+*.csv
