@@ -1,10 +1,23 @@
-from flask import Flask, render_template, request
-from models import db, Entrada
+from flask import Flask, render_template, request, jsonify
+from servidor_pap.models import db, Entrada
 from datetime import datetime
-import dotenv
+from functools import wraps
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+def requiere_basic_auth(f):
+    @wraps(f)
+    def decorador(*args, **kwargs):
+        auth = request.authorization
+        if not auth or auth.username != 'pap' or auth.password != 'pap2026':
+            return jsonify({'error': 'No autorizado'}), 401, {'WWW-Authenticate': 'Basic realm="API"'}
+        return f(*args, **kwargs)
+    return decorador
+
 def crear_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = dotenv.get_key('.env', 'DATABASE_URL')
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
@@ -17,6 +30,7 @@ def crear_app():
         return render_template('index.html')
 
     @app.route('/api/registrar_entrada', methods=['POST'])
+    @requiere_basic_auth
     def registrar_entrada():
         try:
             data = request.get_json()
@@ -58,6 +72,3 @@ def crear_app():
         except Exception as e:
             return {'error': str(e)}, 500
     return app
-if __name__ == '__main__':
-    app = crear_app()
-    app.run(debug=True)

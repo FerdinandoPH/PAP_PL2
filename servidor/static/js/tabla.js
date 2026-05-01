@@ -14,6 +14,7 @@ async function cargarEntradas() {
         data.entradas.forEach(e => {
             const tr = document.createElement('tr');
             const campos = [
+                e.id,
                 e.nombre_usuario,
                 e.nombre_fase,
                 new Date(e.fecha).toLocaleString(),

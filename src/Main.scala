@@ -19,6 +19,7 @@ object Main {
       val req = java.net.http.HttpRequest.newBuilder(java.net.URI.create("http://127.0.0.1:5000/api/registrar_entrada"))
         .POST(cuerpo)
         .header("Content-Type", "application/json")
+        .header("Authorization", "Basic cGFwOnBhcDIwMjY=")
         .build()
       val res = cliente.send(req, java.net.http.HttpResponse.BodyHandlers.ofString())
       if (res.statusCode() == 201) println("Datos subidos al servidor.")
