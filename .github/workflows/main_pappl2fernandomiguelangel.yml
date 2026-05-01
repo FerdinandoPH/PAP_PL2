@@ -74,4 +74,5 @@ jobs:
         with:
           app-name: 'papPL2FernandoMiguelAngel'
           slot-name: 'Production'
+          package: servidor
           
