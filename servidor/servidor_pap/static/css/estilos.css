@@ -3,6 +3,20 @@ body {
     padding: 20px;
 }
 
+.controles-orden {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.controles-orden select {
+    padding: 5px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
 .tabla-contenedor {
     max-height: 500px;
     overflow-y: auto;
@@ -22,6 +36,26 @@ thead th {
     color: white;
     padding: 10px 14px;
     text-align: left;
+}
+
+.fila-filtros th {
+    background: #2a2a2a;
+    padding: 6px 8px;
+}
+
+.fila-filtros input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 4px 6px;
+    border: 1px solid #555;
+    border-radius: 3px;
+    background: #1e1e1e;
+    color: #d4d4d4;
+    font-size: 13px;
+}
+
+.fila-filtros input::placeholder {
+    color: #888;
 }
 
 tbody tr:nth-child(even) {

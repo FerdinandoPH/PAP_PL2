@@ -8,6 +8,18 @@
 </head>
 <body>
     <h1>Entradas registradas</h1>
+    <div class="controles-orden">
+        <label for="campo-orden">Ordenar por:</label>
+        <select id="campo-orden">
+            <option value="fecha">Fecha</option>
+            <option value="nombre_usuario">Usuario</option>
+            <option value="nombre_fase">Fase</option>
+        </select>
+        <select id="direccion-orden">
+            <option value="desc">Descendente</option>
+            <option value="asc">Ascendente</option>
+        </select>
+    </div>
     <div class="tabla-contenedor">
         <table>
             <thead>
@@ -18,6 +30,14 @@
                     <th>Fecha</th>
                     <th>Entrada</th>
                     <th>Salida</th>
+                </tr>
+                <tr class="fila-filtros">
+                    <th><input type="text" id="filtro-id" placeholder="Filtrar..."></th>
+                    <th><input type="text" id="filtro-usuario" placeholder="Filtrar..."></th>
+                    <th><input type="text" id="filtro-fase" placeholder="Filtrar..."></th>
+                    <th><input type="text" id="filtro-fecha" placeholder="Filtrar..."></th>
+                    <th><input type="text" id="filtro-entrada" placeholder="Filtrar..."></th>
+                    <th><input type="text" id="filtro-salida" placeholder="Filtrar..."></th>
                 </tr>
             </thead>
             <tbody id="cuerpo-tabla"></tbody>
