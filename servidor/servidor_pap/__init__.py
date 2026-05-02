@@ -4,6 +4,7 @@ from datetime import datetime
 from functools import wraps
 import os
 from dotenv import load_dotenv
+from flask_migrate import Migrate
 load_dotenv()
 
 def requiere_basic_auth(f):
@@ -21,7 +22,8 @@ def crear_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
-
+    migrate = Migrate()
+    migrate.init_app(app, db)
     with app.app_context():
         db.create_all()
 
