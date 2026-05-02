@@ -16,7 +16,7 @@ object Main {
     try{
       val cliente = java.net.http.HttpClient.newHttpClient()
       val cuerpo = java.net.http.HttpRequest.BodyPublishers.ofString(entrada_json)
-      val req = java.net.http.HttpRequest.newBuilder(java.net.URI.create("http://127.0.0.1:5000/api/registrar_entrada"))
+      val req = java.net.http.HttpRequest.newBuilder(java.net.URI.create("https://papfernandomiguelangel-awg4e5bnhzb6ffhs.switzerlandnorth-01.azurewebsites.net/api/registrar_entrada"))
         .POST(cuerpo)
         .header("Content-Type", "application/json")
         .header("Authorization", "Basic cGFwOnBhcDIwMjY=")
