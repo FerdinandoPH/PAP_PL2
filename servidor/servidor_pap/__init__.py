@@ -11,7 +11,7 @@ def requiere_basic_auth(f):
     @wraps(f)
     def decorador(*args, **kwargs):
         auth = request.authorization
-        if not auth or auth.username != 'pap' or auth.password != 'pap2026':
+        if not auth or auth.username != os.getenv("AUTH_USU") or auth.password != os.getenv("AUTH_PASS"):
             return jsonify({'error': 'No autorizado'}), 401, {'WWW-Authenticate': 'Basic realm="API"'}
         return f(*args, **kwargs)
     return decorador
