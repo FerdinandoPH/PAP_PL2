@@ -200,12 +200,12 @@ object Main {
             case Nil => hist
             case head :: tail =>
               @tailrec
-              def actualizar_histograma(hist: List[(String, Int)], valor: String, acc: List[(String, Int)] = List.empty): List[(String, Int)] = {
+              def actualizar_histograma(hist: List[(String, Int)], clave_buscada: String, acc: List[(String, Int)] = List.empty): List[(String, Int)] = {
                 hist match {
-                  case Nil => (valor, 1) :: acc
+                  case Nil => (clave_buscada, 1) :: acc
                   case (c, v) :: tail =>
-                    if (c == valor) concat_listas((c, v + 1) :: tail, acc)
-                    else actualizar_histograma(tail, valor, (c, v) :: acc)
+                    if (c == clave_buscada) concat_listas((c, v + 1) :: tail, acc)
+                    else actualizar_histograma(tail, clave_buscada, (c, v) :: acc)
                 }
               }
 
@@ -266,15 +266,15 @@ object Main {
     var ruta: String = ""
     println("Bienvenido a la PL2 de Fernando y Miguel Ángel")
     print("Introduzca la ruta del CSV (por defecto se usará 'Airline_dataset.csv'): ")
-    ruta = ""//scala.io.StdIn.readLine().trim
+    ruta = scala.io.StdIn.readLine().trim
     if (ruta.isEmpty) {
       ruta = "Airline_dataset.csv"
     }
     println("Cargando CSV...")
     datos = cargador.cargarCSV(new java.io.File(ruta))
     println("CSV cargado exitosamente")
-    var continuar = true
-    while (continuar) {
+     var continuar = true
+    while (continuar){
       println("Opciones disponibles:")
       println("1. Retraso en despegues")
       println("2. Retraso en aterrizajes")
